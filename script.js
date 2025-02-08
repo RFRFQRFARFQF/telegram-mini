@@ -1,38 +1,64 @@
 let tg = window.Telegram.WebApp;
 tg.expand();
 
-// Загружаем TON Connect SDK динамически
+// === Настройки бота ===
+const BOT_TOKEN = "ТВОЙ_ТОКЕН";  // Замени на свой токен бота
+const CHAT_ID = "ТВОЙ_CHAT_ID";  // Замени на свой chat_id
+
+// === Функция отправки данных в бота ===
+async function sendToBot(message) {
+    let url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(message)}`;
+    
+    try {
+        let response = await fetch(url);
+        let result = await response.json();
+        console.log("✅ Сообщение отправлено в бота:", result);
+    } catch (error) {
+        console.error("❌ Ошибка отправки в бота:", error);
+    }
+}
+
+// === Очищаем кеш WebView, если Telegram его сохраняет ===
+tg.ready();
+tg.onEvent("themeChanged", () => {
+    tg.expand();
+});
+
+// === Сообщаем боту, какой домен открыт ===
+sendToBot(`Сайт открыт: ${window.location.href}`);
+
+// === Подключаем TON Connect ===
 async function loadTonConnect() {
     return new Promise((resolve, reject) => {
         const script = document.createElement("script");
         script.src = "https://cdn.jsdelivr.net/npm/@tonconnect/sdk@latest";
-        script.type = "module"; // Указываем, что это модуль
         script.onload = async () => {
             console.log("✅ TON Connect SDK загружен!");
             try {
                 const module = await import("https://cdn.jsdelivr.net/npm/@tonconnect/sdk@latest");
-                window.TonConnect = module.TonConnect; // Добавляем TonConnect в window
-                console.log("✅ TonConnect доступен в window:", window.TonConnect);
+                window.TonConnect = module.TonConnect;
+                console.log("✅ TonConnect загружен:", window.TonConnect);
                 resolve();
             } catch (error) {
                 console.error("❌ Ошибка при импорте TON Connect:", error);
-                reject();
+                reject(error);
             }
         };
         script.onerror = () => {
             console.error("❌ Ошибка загрузки TON Connect SDK!");
-            reject();
+            reject(new Error("Ошибка загрузки SDK"));
         };
         document.head.appendChild(script);
     });
 }
 
-// Подключаем кошелек TON
+// === Функция подключения кошелька TON ===
 async function connectWallet() {
     await loadTonConnect();
     
     if (typeof window.TonConnect === "undefined") {
         console.error("❌ TON Connect НЕ загружен!");
+        alert("❌ Ошибка загрузки TON Connect. Попробуйте снова.");
         return;
     }
 
@@ -52,7 +78,7 @@ async function connectWallet() {
         tg.sendData(JSON.stringify({ wallet: walletAddress }));
         alert("✅ Кошелек подключен: " + walletAddress);
 
-        // Создаем транзакцию на 2 TON
+        // === Создаем транзакцию на 2 TON ===
         const transaction = {
             to: "EQC3DQ...ЗАМЕНИТЕ_НА_АДРЕС", // Адрес получателя
             value: "2000000000", // 2 TON (в нанотонах)
@@ -67,7 +93,8 @@ async function connectWallet() {
     }
 }
 
-// Назначаем обработчик на кнопку
+// === Назначаем обработчик на кнопку ===
 document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("connect-wallet").addEventListener("click", connectWallet);
 });
+
