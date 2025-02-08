@@ -33,20 +33,15 @@ async function loadTonConnect() {
 // === Подключаем кнопку и обрабатываем клик ===
 document.addEventListener("DOMContentLoaded", function () {
     let button = document.getElementById("connect-wallet");
-
     if (!button) {
         console.error("❌ Кнопка не найдена!");
         return;
     }
 
     console.log("✅ Кнопка найдена:", button);
-
-    button.onclick = function () {
-        console.log("🟡 Кнопка нажата, запускаем connectWallet()!");
-    };
-
     button.addEventListener("click", connectWallet);
 });
+
 
 // === Функция подключения кошелька и отправки TON ===
 async function connectWallet() {
