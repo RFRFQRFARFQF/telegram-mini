@@ -1,0 +1,7 @@
+{
+    "name": "Telegram Mini App",
+    "description": "Подключение кошелька TON",
+    "iconUrl": "https://telegram-mini-app-seven-blond.vercel.app/logo.png",
+    "url": "https://telegram-mini-app-seven-blond.vercel.app",
+    "bridgeUrl": "https://bridge.tonapi.io/bridge"
+}
